@@ -2,7 +2,7 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bảng Kiểm Đếm Gạc và Dụng Cụ</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -10,6 +10,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
 
     <style>
+        
         body { font-family: "Times New Roman", Times, serif; background: #525659; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
         
         .controls { position: sticky; top: 0; z-index: 100; background: white; padding: 10px; width: 100%; display: flex; justify-content: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
@@ -41,7 +42,8 @@
         .sig-instruction { font-size: 9pt; color: rgba(0,0,0,0.2); font-weight: normal; margin-top: 5px; }
         .sig-preview { max-height: 80px; max-width: 100%; object-fit: contain; display: none; margin-top: 5px; }
 
-        .cropper-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px; }
+        .cropper-wrap-box {background: #eee;}
+        .cropper-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; display: none; justify-content: center; align-items: center; padding: 20px; opacity: 1;}
         .cropper-content { background: white; padding: 15px; border-radius: 8px; max-width: 500px; width: 100%; }
         #crop-area { width: 100%; height: 300px; background: #eee; margin-bottom: 10px; }
     </style>
@@ -183,7 +185,14 @@
     }
 
     function saveCrop() {
-        const canvas = cropper.getCroppedCanvas({ maxWidth: 600, fillColor: '#fff' });
+        const canvas = cropper.getCroppedCanvas({
+        // Tăng kích thước này lên để ảnh không bị vỡ (ví dụ 1000px hoặc 2000px)
+        maxWidth: 2000, 
+        maxHeight: 2000,
+        fillColor: '#fff', // Ép nền trắng cho các vùng trống hoặc ảnh trong suốt
+        imageSmoothingEnabled: true,
+        imageSmoothingQuality: 'high', // Giữ độ chi tiết cao nhất
+    });
         const img = document.getElementById(targetImgId);
         img.src = canvas.toDataURL('image/jpeg', 1.0);
         img.style.display = 'block';
@@ -216,7 +225,7 @@
 
         const opt = {
             margin: 0,
-            filename: 'Phieu_Kiem_Dem.pdf',
+            filename: 'Phieu dung cu.pdf',
             image: { type: 'jpeg', quality: 1.0 },
             html2canvas: { scale: 3.0, useCORS: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
