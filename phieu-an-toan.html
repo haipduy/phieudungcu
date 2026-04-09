@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Kiểm An Toàn Phẫu Thuật</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --border-color: #000;
+            --primary-blue: #007bff;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            /* 1. SỬ DỤNG TIMES NEW ROMAN CHO TOÀN BỘ TRANG */
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        /* Điều hướng */
+        .home-navigation {
+            width: 100%;
+            max-width: 1120px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .back-btn {
+            text-decoration: none;
+            color: var(--primary-blue);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .form-container {
+            background-color: white;
+            width: 100%;
+            max-width: 1120px; 
+            padding: 20px 20px; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            color: black;
+            /* 2. CHỈNH SIZE CHỮ VỀ 11 */
+            font-size: 11px; 
+            line-height: 1.4; 
+        }
+
+        /* Header Layout */
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 10px; 
+        }
+        .header-left {
+            text-align: center;
+            line-height: 1.2;
+        }
+        .header-right {
+            text-align: center;
+            flex-grow: 1;
+        }
+        .bold { font-weight: bold; }
+
+        /* Input dùng dòng chấm */
+        input.dotted-input {
+            border: none;
+            border-bottom: 1px dotted #000;
+            outline: none;
+            font-family: inherit;
+            /* Đồng bộ size 11 cho cả chỗ gõ chữ */
+            font-size: 11px; 
+            background: transparent;
+            min-height: 16px; 
+        }
+
+        /* Thông tin bệnh nhân */
+        .patient-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px 15px; 
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        .info-item {
+            display: flex;
+            align-items: flex-end;
+        }
+
+        /* Thanh quy trình (Arrows) */
+        .process-flow {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+        .phase-box {
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            font-weight: bold;
+            font-size: 11px;
+            text-transform: uppercase;
+            text-align: center;
+            border-radius: 3px;
+        }
+        .arrow-icon {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Bảng 3 cột */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            border: 2px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+        .check-col {
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+        }
+        .check-col:last-child {
+            border-right: none;
+        }
+        .section-block {
+            padding: 6px 8px; 
+            border-bottom: 1px solid var(--border-color);
+            flex-grow: 1; 
+        }
+        .section-block:last-child {
+            border-bottom: none;
+        }
+        
+        /* Format chữ trong cột */
+        .col-title {
+            font-style: italic;
+            margin-bottom: 3px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2px; 
+            cursor: pointer;
+        }
+        .checkbox-item input[type="checkbox"] {
+            margin-top: 1px;
+            margin-right: 4px;
+            cursor: pointer;
+            width: 11px;
+            height: 11px;
+        }
+        .inline-checkboxes {
+            display: flex;
+            gap: 10px;
+            margin-top: 3px;
+            flex-wrap: wrap;
+        }
+
+        /* Khu vực 5 chữ ký */
+        .signatures-area {
+            border-top: 2px solid var(--border-color);
+            padding-top: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            text-align: center;
+            flex-wrap: wrap;
+        }
+        .sig-box {
+            width: 18%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-style: italic;
+            font-size: 11px;
+            min-height: 80px; 
+        }
+        .sig-img {
+            max-width: 100%;
+            max-height: 60px;
+            display: none;
+            margin-top: 5px;
+        }
+        .upload-btn {
+            padding: 2px 5px;
+            font-size: 10px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        /* Modal Cropper */
+        #cropperModal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .img-container { max-height: 60vh; margin-bottom: 15px; }
+
+        /* Nút xuất PDF */
+        .action-btn {
+            margin-top: 15px;
+            padding: 12px 25px;
+            font-size: 16px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .no-print { display: block; }
+
+        /* RESPONSIVE DI ĐỘNG */
+        @media (max-width: 768px) {
+            body:not(.exporting) .checklist-grid { grid-template-columns: 1fr; border: 1px solid var(--border-color); }
+            body:not(.exporting) .check-col { border-right: none; border-bottom: 2px solid var(--border-color); }
+            body:not(.exporting) .check-col:last-child { border-bottom: none; }
+            body:not(.exporting) .process-flow { flex-direction: column; gap: 5px; align-items: center; }
+            body:not(.exporting) .arrow-icon { transform: rotate(90deg); width: auto !important; }
+            body:not(.exporting) .arrow-icon[style*="transparent"] { display: none; } 
+            body:not(.exporting) .signatures-area { gap: 15px; }
+            body:not(.exporting) .sig-box { width: 45%; }
+        }
+
+        /* CHUẨN XUẤT PDF (Khóa width 1120px cho chuẩn A4 Ngang) */
+        body.exporting { padding: 0 !important; background: white; }
+        body.exporting .form-container {
+            width: 1120px !important;
+            max-width: 1120px !important;
+            padding: 25px 20px !important; 
+            margin: 0 !important;
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="home-navigation no-print">
+        <a href="index.html" class="back-btn">⇽ Trang chủ</a>
+    </div>
+
+    <div class="form-container" id="pdf-content">
+        <div class="header-top">
+            <div class="header-left">
+                <span>SỞ Y TẾ ĐÀ NẴNG</span><br>
+                <span class="bold">BỆNH VIỆN ĐẠI HỌC Y KHOA PHAN CHÂU TRINH</span><br>
+                <span>Khoa Phẫu thuật Gây mê - Hồi sức</span>
+            </div>
+            <div class="header-right">
+                <h2 style="margin: 5px 0 0 0; text-transform: uppercase; font-size: 15px;">BẢNG KIỂM AN TOÀN PHẪU THUẬT</h2>
+            </div>
+        </div>
+
+        <div class="patient-info">
+            <div class="info-item" style="flex-grow: 1; min-width: 250px;">
+                Họ và tên: <input type="text" class="dotted-input" style="flex-grow: 1; margin-left: 5px;">
+            </div>
+            <div class="info-item">
+                Tuổi: <input type="text" class="dotted-input" style="width: 40px; margin-left: 5px;">
+            </div>
+            <div class="info-item" style="gap: 10px; align-items: center; margin-bottom: 2px;">
+                Giới tính: 
+                <label><input type="checkbox"> Nam</label>
+                <label><input type="checkbox"> Nữ</label>
+            </div>
+            <div class="info-item">
+                Mã NB: <input type="text" class="dotted-input" style="width: 120px; margin-left: 5px;">
+            </div>
+            <div class="info-item" style="width: 100%;">
+                Chẩn đoán: <input type="text" class="dotted-input" style="flex-grow: 1; margin-left: 5px;">
+            </div>
+            <div class="info-item" style="flex-grow: 1;">
+                Phòng mổ: <input type="text" class="dotted-input" style="flex-grow: 1; margin-left: 5px;">
+            </div>
+            <div class="info-item">
+                Ngày <input type="text" class="dotted-input" style="width: 30px; text-align: center;"> 
+                tháng <input type="text" class="dotted-input" style="width: 30px; text-align: center;"> 
+                năm 202<input type="text" class="dotted-input" style="width: 20px; text-align: center;">
+            </div>
+        </div>
+
+        <div class="process-flow">
+            <div class="phase-box">TRƯỚC GÂY TÊ, GÂY MÊ</div>
+            <div class="arrow-icon" style="color: transparent; width: 100px;"></div> <div class="arrow-icon">⇨</div>
+            <div class="phase-box">TRƯỚC KHI RẠCH DA</div>
+            <div class="arrow-icon">⇨</div>
+            <div class="phase-box">TRƯỚC KHI RỜI KHỎI PHÒNG MỔ</div>
+        </div>
+
+        <div class="checklist-grid">
+            
+            <div class="check-col">
+                <div class="section-block">
+                    <div class="col-title">(Bác sĩ gây mê, KTV/điều dưỡng gây mê)</div>
+                    <div class="bold" style="margin-bottom: 3px;">Người bệnh đã được kiểm tra, xác nhận:</div>
+                    <label class="checkbox-item"><input type="checkbox"> Họ và tên, tuổi, giới tính, mã người bệnh</label>
+                    <label class="checkbox-item"><input type="checkbox"> Vị trí phẫu thuật</label>
+                    <label class="checkbox-item"><input type="checkbox"> Phương pháp phẫu thuật dự kiến</label>
+                    <label class="checkbox-item"><input type="checkbox"> Giấy cam kết chấp nhận phẫu thuật, thủ thuật, GMHS</label>
+                </div>
+                <div class="section-block">
+                    <div class="bold">Vùng mổ được đánh dấu:</div>
+                    <div class="inline-checkboxes">
+                        <label><input type="checkbox"> Có</label>
+                        <label><input type="checkbox"> Không áp dụng</label>
+                    </div>
+                </div>
+                <div class="section-block">
+                    <div class="bold">Thuốc và thiết bị gây mê đầy đủ và sẵn sàng:</div>
+                    <label class="checkbox-item"><input type="checkbox"> Có</label>
+                </div>
+                <div class="section-block">
+                    <div class="bold">Máy đo bão hòa oxy trong máu gắn trên người bệnh và hoạt động bình thường:</div>
+                    <label class="checkbox-item"><input type="checkbox"> Có</label>
+                </div>
+                <div class="section-block">
+                    <div class="bold">Người bệnh có tiền sử dị ứng/say tàu xe:</div>
+                    <div class="inline-checkboxes">
+                        <label><input type="checkbox"> Có</label>
+                        <label><input type="checkbox"> Không</label>
+                    </div>
+                </div>
+                <div class="section-block">
+                    <div class="bold">Người bệnh có khó thở hoặc có nguy cơ sặc:</div>
+                    <div class="inline-checkboxes">
+                        <label><input type="checkbox"> Không</label>
+                        <label><input type="checkbox"> Có (thiết bị/dụng cụ hỗ trợ)</label>
+                    </div>
+                </div>
+                <div class="section-block" style="border-bottom: none;">
+                    <div class="bold">Người bệnh có nguy cơ mất > 500ml máu (7ml/kg ở trẻ em):</div>
+                    <label class="checkbox-item" style="margin-top: 3px;"><input type="checkbox"> Không</label>
+                    <label class="checkbox-item"><input type="checkbox"> <span>Có, và có sẵn 2 đường truyền/tĩnh mạch trung tâm và dịch truyền/máu.</span></label>
+                </div>
+            </div>
+
+            <div class="check-col">
+                <div class="section-block">
+                    <div class="col-title">(Điều dưỡng phòng mổ, Bác sĩ gây mê, PTV)</div>
+                    <label class="checkbox-item"><input type="checkbox"> <span class="bold">Các thành viên trong kíp giới thiệu tên, nhiệm vụ</span></label>
+                    <label class="checkbox-item"><input type="checkbox"> <span class="bold">Xác nhận lại họ tên người bệnh và vị trí rạch da bằng lời</span></label>
+                </div>
+                <div class="section-block">
+                    <div class="bold">Kháng sinh dự phòng:</div>
+                    <div class="inline-checkboxes">
+                        <label><input type="checkbox"> Có</label>
+                        <label><input type="checkbox"> Không áp dụng</label>
+                    </div>
+                </div>
+                <div class="section-block">
+                    <div class="bold">Dự kiến:</div>
+                    <div class="bold" style="margin-top: 3px;">Đối với phẫu thuật viên (PTV):</div>
+                    <label class="checkbox-item"><input type="checkbox"> Những chú ý trong phẫu thuật hoặc diễn biến bất ngờ</label>
+                    <label class="checkbox-item"><input type="checkbox"> Thời gian phẫu thuật</label>
+                    <label class="checkbox-item"><input type="checkbox"> Dụng cụ đặc biệt dùng cho phẫu thuật</label>
+                    <label class="checkbox-item"><input type="checkbox"> Tiên lượng mất máu</label>
+                    
+                    <div class="bold" style="margin-top: 6px;">Đối với Bác sỹ gây mê:</div>
+                    <label class="checkbox-item"><input type="checkbox"> Điều cần chú ý trong gây mê ở người bệnh</label>
+                    
+                    <div class="bold" style="margin-top: 6px;">Đối với nhóm Điều dưỡng:</div>
+                    <label class="checkbox-item"><input type="checkbox"> Xác nhận tình trạng vô khuẩn bằng lời với các loại dụng cụ dùng cho phẫu thuật</label>
+                    <div style="display: flex; gap: 10px; margin-top: 3px;">
+                        <span>Thiết bị bị hỏng, bị thiếu:</span>
+                        <label><input type="checkbox"> Có</label>
+                        <label><input type="checkbox"> Không</label>
+                    </div>
+                </div>
+                <div class="section-block" style="border-bottom: none;">
+                    <div class="bold">Chẩn đoán hình ảnh thiết yếu được chiếu:</div>
+                    <div class="inline-checkboxes">
+                        <label><input type="checkbox"> Có</label>
+                        <label><input type="checkbox"> Không áp dụng</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="check-col">
+                <div class="section-block">
+                    <div class="col-title">(Điều dưỡng phòng mổ, Bác sĩ gây mê, PTV)</div>
+                    <div class="bold" style="margin-bottom: 3px;">Điều dưỡng viên xác nhận lại bằng lời:</div>
+                    <label class="checkbox-item"><input type="checkbox"> Tên của phương pháp mổ</label>
+                    <label class="checkbox-item"><input type="checkbox"> Hoàn thành đếm gạc, kim và dụng cụ phẫu thuật</label>
+                    <label class="checkbox-item"><input type="checkbox"> Các vấn đề về dụng cụ cần giải quyết</label>
+                    <div style="margin-top: 3px;">Dán nhãn bệnh phẩm (đọc to cả nhãn bệnh phẩm bao gồm cả tên người bệnh)</div>
+                    <div class="inline-checkboxes">
+                        <label><input type="checkbox"> Có</label>
+                        <label><input type="checkbox"> Không áp dụng</label>
+                    </div>
+                </div>
+                <div class="section-block" style="border-bottom: none; display: flex; flex-direction: column;">
+                    <div class="bold">Đối với PTV, BS gây mê, điều dưỡng:</div>
+                    <div style="margin-bottom: 3px;">Những vấn đề cần lưu ý đặc biệt về hồi tỉnh và chăm sóc sau mổ</div>
+                    <input type="text" class="dotted-input" style="width: 100%; margin-top: 3px;">
+                    <input type="text" class="dotted-input" style="width: 100%; margin-top: 3px;">
+                    <input type="text" class="dotted-input" style="width: 100%; margin-top: 3px;">
+                    <input type="text" class="dotted-input" style="width: 100%; margin-top: 3px;">
+                    <input type="text" class="dotted-input" style="width: 100%; margin-top: 3px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="signatures-area">
+            <div class="sig-box">
+                <span>ĐD chạy ngoài/vòng ngoài</span>
+                <img id="img-sig1" class="sig-img" src="">
+                <input type="file" id="file-sig1" class="no-print upload-btn" accept="image/*" onchange="openCropper(event, 'img-sig1')">
+            </div>
+            <div class="sig-box">
+                <span>ĐD dụng cụ/vòng trong</span>
+                <img id="img-sig2" class="sig-img" src="">
+                <input type="file" id="file-sig2" class="no-print upload-btn" accept="image/*" onchange="openCropper(event, 'img-sig2')">
+            </div>
+            <div class="sig-box">
+                <span>KTV/ĐD phụ mê</span>
+                <img id="img-sig3" class="sig-img" src="">
+                <input type="file" id="file-sig3" class="no-print upload-btn" accept="image/*" onchange="openCropper(event, 'img-sig3')">
+            </div>
+            <div class="sig-box">
+                <span>Bác sỹ gây mê</span>
+                <img id="img-sig4" class="sig-img" src="">
+                <input type="file" id="file-sig4" class="no-print upload-btn" accept="image/*" onchange="openCropper(event, 'img-sig4')">
+            </div>
+            <div class="sig-box">
+                <span>Phẫu thuật viên</span>
+                <img id="img-sig5" class="sig-img" src="">
+                <input type="file" id="file-sig5" class="no-print upload-btn" accept="image/*" onchange="openCropper(event, 'img-sig5')">
+            </div>
+        </div>
+
+    </div>
+
+    <button class="no-print action-btn" onclick="exportPDF()">Tải Xuống PDF (A4 Ngang)</button>
+
+    <div id="cropperModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0">Cắt ảnh chữ ký</h3>
+            <div class="img-container">
+                <img id="imageToCrop" src="" style="max-width: 100%;">
+            </div>
+            <button onclick="cropImage()" style="padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; margin-right: 10px;">Xác nhận</button>
+            <button onclick="closeModal()" style="padding: 10px 20px; background: #dc3545; color: white; border: none; cursor: pointer; border-radius: 5px;">Hủy</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        let cropper;
+        let currentTargetImgId = '';
+
+        function openCropper(event, targetImgId) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            currentTargetImgId = targetImgId;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imgToCrop = document.getElementById('imageToCrop');
+                imgToCrop.src = e.target.result;
+                
+                document.getElementById('cropperModal').style.display = 'flex';
+
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(imgToCrop, {
+                    aspectRatio: NaN,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function cropImage() {
+            if (!cropper) return;
+            const canvas = cropper.getCroppedCanvas();
+            const targetImg = document.getElementById(currentTargetImgId);
+            
+            targetImg.src = canvas.toDataURL();
+            targetImg.style.display = 'block';
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('cropperModal').style.display = 'none';
+            if (cropper) cropper.destroy();
+        }
+
+        function exportPDF() {
+            window.scrollTo(0, 0);
+
+            const element = document.getElementById('pdf-content');
+            
+            const hideElements = document.querySelectorAll('.no-print');
+            hideElements.forEach(el => el.style.display = 'none');
+
+            document.body.classList.add('exporting');
+
+            setTimeout(() => {
+                const opt = {
+                    margin:       0,
+                    filename:     'An_Toan_Phau_Thuat.pdf',
+                    image:        { type: 'jpeg', quality: 1 },
+                    html2canvas:  { 
+                        scale: 2,
+                        useCORS: true,
+                        windowWidth: 1120 
+                    },
+                    jsPDF: { 
+                        unit: 'in', 
+                        format: 'a4', 
+                        orientation: 'landscape' 
+                    }
+                };
+
+                html2pdf().set(opt).from(element).save().then(() => {
+                    document.body.classList.remove('exporting');
+                    hideElements.forEach(el => el.style.display = 'block');
+                    
+                    for(let i=1; i<=5; i++) {
+                        document.getElementById('file-sig' + i).style.display = 'inline-block';
+                    }
+                });
+            }, 300);
+        }
+    </script>
+</body>
+</html>

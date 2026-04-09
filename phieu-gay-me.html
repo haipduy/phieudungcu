@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hệ Thống Phiếu Y Tế</title>
+    <style>
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg: #ffffff;
+            --primary-text: #1c1e21;
+            --secondary-text: #606770;
+            --blue-med: #007bff;
+            --shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent; /* Tắt màu xanh khi chạm trên mobile */
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .header {
+            width: 100%;
+            max-width: 500px;
+            margin-bottom: 24px;
+            text-align: left;
+            padding: 0 10px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--primary-text);
+            margin: 0;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: var(--secondary-text);
+            margin: 8px 0 0 0;
+        }
+
+        .no-print { display: block; }
+
+        /* Nút quay lại trang chủ */
+        .home-navigation {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: flex-start;
+        }
+        .back-btn {
+            text-decoration: none;
+            color: var(--primary-blue);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+       
+    </style>
+</head>
+<body>
+
+    <div class="home-navigation no-print">
+        <a href="index.html" class="back-btn">⇽ Trang chủ</a>
+    </div>
+
+    <p>
+        Đang phát triển
+    </p>
+
+</body>
+</html>
