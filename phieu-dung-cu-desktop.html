@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phiếu Dụng Cụ Phẫu Thuật</title>
+    <title>Phiếu Dụng Cụ Phẫu Thuật</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tinos:ital,wght@0,400;0,700;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --border-color: #000;
+            --primary-blue: #007bff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        body.exporting {
+            padding: 0 !important;
+            background: white;
+        }
+
+        body.exporting .form-container {
+            width: 800px !important;
+            max-width: none !important;
+            /* Quan trọng: gỡ bỏ max-width để tránh bị bóp sai tỷ lệ */
+            padding: 30px 40px !important;
+            margin: 0 auto !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        /* Nút quay lại trang chủ */
+        .home-navigation {
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: flex-start;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            color: var(--primary-blue);
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-container {
+            background-color: white;
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            color: black;
+            font-size: 15px;
+            line-height: 1.5;
+            overflow: hidden;
+        }
+
+        /* Lưới Header */
+        .header-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 1.4fr 1.1fr;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .header-grid>div {
+            border-right: 1px solid var(--border-color);
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 110px;
+        }
+
+        .header-grid>div:last-child {
+            border-right: none;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        /* Các ô input dạng dòng kẻ */
+        input.dotted-input {
+            border: none;
+            border-bottom: 1px dotted #000;
+            outline: none;
+            font-family: inherit;
+            font-size: 15px;
+            background: transparent;
+            min-height: 22px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* Bảng */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            table-layout: fixed;
+        }
+
+        th,
+        td {
+            border: 1px solid var(--border-color);
+            padding: 0;
+            text-align: center;
+            height: 32px;
+            overflow: hidden;
+        }
+
+        th {
+            padding: 5px;
+            font-weight: bold;
+        }
+
+        .text-left {
+            text-align: left;
+            padding-left: 5px;
+        }
+
+        /* Input lấp đầy ô table */
+        input.cell-input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            outline: none;
+            background: transparent;
+            text-align: center;
+            font-family: inherit;
+            font-size: 15px;
+        }
+
+        input.cell-input:focus {
+            background-color: #e6f7ff;
+        }
+
+        /* Footer form */
+        .footer-section {
+            line-height: 1.6;
+        }
+
+        .flex-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 5px;
+            min-height: 28px;
+        }
+
+        .checkbox-group label {
+            margin-right: 15px;
+            cursor: pointer;
+        }
+
+        /* Chữ ký */
+        .signatures {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding: 0 40px;
+            text-align: center;
+        }
+
+        .sig-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            min-height: 120px;
+            width: 45%;
+        }
+
+        .sig-img {
+            max-width: 180px;
+            max-height: 90px;
+            display: none;
+        }
+
+        .upload-btn {
+            padding: 4px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        /* Nút chức năng */
+        .action-btn {
+            margin-top: 20px;
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
+            font-weight: bold;
+        }
+
+        /* Modal Cắt ảnh */
+        #cropperModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .img-container {
+            max-height: 60vh;
+            margin-bottom: 15px;
+        }
+
+        .no-print {
+            display: block;
+        }
+
+        /* --- XỬ LÝ RESPONSIVE VÀ PDF --- */
+        @media (max-width: 600px) {
+            body:not(.exporting) .header-grid {
+                display: flex;
+                flex-direction: column;
+            }
+
+            body:not(.exporting) .header-grid>div {
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+            }
+
+            body:not(.exporting) .header-grid>div:last-child {
+                border-bottom: none;
+            }
+
+            body:not(.exporting) .signatures {
+                flex-direction: column;
+                gap: 40px;
+            }
+
+            body:not(.exporting) .sig-box {
+                width: 100%;
+            }
+
+            body:not(.exporting) table {
+                font-size: 13px;
+            }
+        }
+
+        body.exporting {
+            padding: 0 !important;
+            background: white;
+        }
+
+        body.exporting .form-container {
+            width: 800px !important;
+            max-width: 800px !important;
+            padding: 40px 30px !important;
+            margin: 0 !important;
+            box-shadow: none !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="home-navigation no-print">
+        <a href="index.html" class="back-btn">⇽ Trang chủ</a>
+    </div>
+
+    <div class="form-container" id="pdf-content">
+        <div class="header-grid">
+            <div>
+                <span>SỞ Y TẾ QUẢNG NAM</span>
+                <span class="bold">BỆNH VIỆN ĐẠI HỌC Y KHOA<br>PHAN CHÂU TRINH</span>
+                <span>Khoa Phẫu thuật Gây mê - Hồi sức</span>
+            </div>
+            <div>
+                <h3 style="margin:0; font-size: 16px;">BẢNG KIỂM ĐẾM GẠC,<br>DỤNG CỤ SẮC NHỌN,<br>DỤNG CỤ</h3>
+            </div>
+            <div style="line-height: 1.8; justify-content: center; padding-left: 15px; padding-right: 15px;">
+                <div style="display: flex; align-items: flex-end; margin-bottom: 8px;">
+                    <span style="white-space: nowrap;">Số vào viện:</span>
+                    <input type="text" class="dotted-input" style="flex-grow: 1; width: 30px; margin-left: 5px;">
+                </div>
+                <div style="display: flex; align-items: flex-end;">
+                    <span style="white-space: nowrap;">Mã người bệnh:</span>
+                    <input type="text" class="dotted-input" style="flex-grow: 1; width: 30px; margin-left: 5px;">
+                </div>
+            </div>
+        </div>
+
+        <div class="info-row">
+            <div style="flex-grow: 1; display: flex; align-items: flex-end;">
+                Họ và tên người bệnh: <input type="text" class="dotted-input" style="flex-grow: 1; margin: 0 10px;">
+            </div>
+            <div style="display: flex; align-items: flex-end;">
+                Tuổi: <input type="text" class="dotted-input" style="width: 40px; margin: 0 10px;">
+            </div>
+            <div class="checkbox-group" style="margin-top: 3px;">
+                <label><input type="checkbox"> Nam</label>
+                <label><input type="checkbox"> Nữ</label>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th rowspan="2" style="width: 32%;">Dụng cụ vật tư cần kiểm đếm</th>
+                    <th rowspan="2" style="width: 12%;">Trước khi rạch da</th>
+                    <th colspan="4">Số lượng cung cấp thêm</th>
+                    <th rowspan="2" style="width: 13%;">Đếm khi đóng khoang rỗng</th>
+                    <th rowspan="2" style="width: 9%;">Khi đóng da</th>
+                </tr>
+                <tr>
+                    <th style="width: 8.5%;"></th>
+                    <th style="width: 8.5%;"></th>
+                    <th style="width: 8.5%;"></th>
+                    <th style="width: 8.5%;"></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="text-left"><label style="cursor:pointer;"><input type="checkbox"> Gạc <input type="text"
+                                class="dotted-input" style="width: 45px; text-align: center;"> x <input type="text"
+                                class="dotted-input" style="width: 45px; text-align: center;"> cm</label></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                </tr>
+                <tr>
+                    <td class="text-left"><label style="cursor:pointer;"><input type="checkbox"> Gạc <input type="text"
+                                class="dotted-input" style="width: 45px; text-align: center;"> x <input type="text"
+                                class="dotted-input" style="width: 45px; text-align: center;"> cm</label></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                </tr>
+                <tr>
+                    <td class="text-left"><label style="cursor:pointer;"><input type="checkbox"> Kim</label></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                </tr>
+                <tr>
+                    <td class="text-left"><label style="cursor:pointer;"><input type="checkbox"> Dao</label></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                </tr>
+                <tr>
+                    <td class="text-left"><label style="cursor:pointer;"><input type="checkbox"> Dụng cụ</label></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                </tr>
+                <tr>
+                    <td class="text-left" style="padding-left: 2px;"><input type="text" class="dotted-input"
+                            style="width: 95%;"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                    <td><input type="text" class="cell-input"></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="footer-section">
+            <div class="flex-row">
+                <span style="width: 200px;">Kết thúc cuộc phẫu thuật:</span>
+                <div class="checkbox-group">
+                    <label><input type="checkbox"> Kiểm đủ</label>
+                    <label><input type="checkbox"> Không đủ</label>
+                </div>
+            </div>
+
+            <div class="flex-row" style="margin-top: 5px;">
+                <span style="white-space: nowrap;">Mô tả vật dụng mất:</span>
+                <input type="text" class="dotted-input" style="flex-grow: 1;">
+            </div>
+
+            <div class="flex-row" style="margin-top: 5px;">
+                <span style="width: 200px;">Thông báo cho phẫu thuật viên:</span>
+                <div class="checkbox-group">
+                    <label><input type="checkbox"> Không</label>
+                    <label><input type="checkbox"> Có</label>
+                </div>
+            </div>
+            <div class="flex-row" style="margin-top: 5px;">
+                <span style="width: 200px;">Kiểm tra XQ:</span>
+                <div class="checkbox-group">
+                    <label><input type="checkbox"> Không</label>
+                    <label><input type="checkbox"> Có</label>
+                </div>
+            </div>
+
+            <div class="bold" style="margin-top: 5px;">Kết quả:</div>
+            <div><label><input type="checkbox"> Tìm được vật dụng</label></div>
+            <div class="flex-row" style="margin-bottom: 20px;">
+                <label><input type="checkbox"> Không tìm được (ghi rõ):</label>
+                <input type="text" class="dotted-input" style="flex-grow: 1;">
+            </div>
+
+            <div style="border-top: 1px dotted #000; margin: 15px 0;"></div>
+            <div class="flex-row" style="margin-bottom: 20px;">
+                <span class="bold">Xử lý:</span>
+                <input type="text" class="dotted-input" style="flex-grow: 1;">
+            </div>
+            <div style="border-top: 1px dotted #000; margin: 15px 0;"></div>
+        </div>
+
+        <div class="signatures">
+            <div class="sig-box">
+                <span class="bold">ĐIỀU DƯỠNG VÒNG TRONG</span>
+                <img id="img-trong" class="sig-img" src="" alt="Chữ ký vòng trong">
+                <input type="file" id="file-trong" class="no-print upload-btn" accept="image/*"
+                    onchange="openCropper(event, 'img-trong')">
+            </div>
+            <div class="sig-box">
+                <span class="bold">ĐIỀU DƯỠNG VÒNG NGOÀI</span>
+                <img id="img-ngoai" class="sig-img" src="" alt="Chữ ký vòng ngoài">
+                <input type="file" id="file-ngoai" class="no-print upload-btn" accept="image/*"
+                    onchange="openCropper(event, 'img-ngoai')">
+            </div>
+        </div>
+    </div>
+
+    <button class="no-print action-btn" onclick="exportPDF()">Tải Xuống PDF</button>
+
+    <div id="cropperModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0">Cắt ảnh chữ ký</h3>
+            <div class="img-container">
+                <img id="imageToCrop" src="" style="max-width: 100%;">
+            </div>
+            <button onclick="cropImage()"
+                style="padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; margin-right: 10px;">Xác
+                nhận</button>
+            <button onclick="closeModal()"
+                style="padding: 10px 20px; background: #dc3545; color: white; border: none; cursor: pointer; border-radius: 5px;">Hủy</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script>
+        let cropper;
+        let currentTargetImgId = '';
+
+        function openCropper(event, targetImgId) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            currentTargetImgId = targetImgId;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgToCrop = document.getElementById('imageToCrop');
+                imgToCrop.src = e.target.result;
+
+                document.getElementById('cropperModal').style.display = 'flex';
+
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(imgToCrop, {
+                    aspectRatio: NaN,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function cropImage() {
+            if (!cropper) return;
+            const canvas = cropper.getCroppedCanvas();
+            const targetImg = document.getElementById(currentTargetImgId);
+
+            targetImg.src = canvas.toDataURL();
+            targetImg.style.display = 'block';
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('cropperModal').style.display = 'none';
+            if (cropper) cropper.destroy();
+        }
+        
+        function exportPDF() {
+            window.scrollTo(0, 0);
+
+            const element = document.getElementById('pdf-content');
+
+            // Ẩn các nút không cần in
+            const hideElements = document.querySelectorAll('.no-print');
+            hideElements.forEach(el => el.style.display = 'none');
+
+            // Thêm class để cố định layout thành 800px
+            document.body.classList.add('exporting');
+
+            // Đợi font chữ và CSS load xong hoàn toàn mới tiến hành xuất PDF
+            document.fonts.ready.then(() => {
+                setTimeout(() => {
+                    const opt = {
+                        margin: [10, 0, 10, 0], // Chuyển sang hệ mm: Lề trên 10mm, dưới 10mm, trái/phải 0
+                        filename: 'Phieu_Dung_Cu.pdf',
+                        image: { type: 'jpeg', quality: 0.98 },
+                        html2canvas: {
+                            scale: 2, // Mức 2 là nét chuẩn cho A4, hạn chế tràn RAM gây lỗi file
+                            useCORS: true,
+                            letterRendering: true
+                            // ĐÃ XÓA: windowWidth, scrollX, scrollY để thư viện tự ép vừa khổ A4
+                        },
+                        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } // Đổi sang 'mm'
+                    };
+
+                    html2pdf().set(opt).from(element).save().then(() => {
+                        // Phục hồi lại giao diện sau khi xuất xong
+                        document.body.classList.remove('exporting');
+                        hideElements.forEach(el => el.style.display = 'block');
+
+                        // Đảm bảo nút upload chữ ký hiển thị lại đúng cách
+                        document.getElementById('file-trong').style.display = 'inline-block';
+                        document.getElementById('file-ngoai').style.display = 'inline-block';
+                    });
+                }, 500);
+            });
+        }
+    </script>
+</body>
+
+</html>
