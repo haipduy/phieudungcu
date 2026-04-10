@@ -28,7 +28,7 @@
             background-color: #525659;
             margin: 0;
             padding: 10px;
-            display: block; /* Sửa lỗi cắt lề trái trên Mobile */
+            display: block; 
         }
 
         /* --- TOOLBAR --- */
@@ -39,7 +39,7 @@
             background: #2c3e50;
             padding: 10px;
             border-radius: 8px;
-            margin: 0 auto 15px auto; /* Căn giữa toolbar */
+            margin: 0 auto 15px auto;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
             display: flex;
             gap: 8px;
@@ -73,19 +73,20 @@
 
         .action-btn.btn-delete { background: #c0392b; color: white; }
         .action-btn.btn-print { background: #27ae60; color: white; }
+        .action-btn.btn-save { background: #34495e; color: white; border: 1px solid #fff; }
+        .action-btn.btn-clear { background: #7f8c8d; color: white; }
 
         .back-btn {
             text-decoration: none; color: white; font-weight: bold; gap: 5px; font-size: 14px;
             padding: 5px 10px; border-radius: 5px; display: block; width: 100%; height: 100%;
         }
 
-        /* --- CONTAINER ĐA TRANG (FIX LỖI GÓC TRÁI) --- */
+        /* --- CONTAINER ĐA TRANG --- */
         .main-container {
             width: 100%;
             overflow-x: auto;
             -webkit-overflow-scrolling: touch;
             padding-bottom: 30px;
-            /* Đã xóa display: flex; và justify-content: center; ở đây */
         }
 
         .page-wrapper {
@@ -95,7 +96,7 @@
             background: white;
             position: relative;
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-            margin: 0 auto; /* Căn giữa trang giấy trên máy tính, đẩy sát trái trên điện thoại */
+            margin: 0 auto; 
         }
 
         .html-template {
@@ -137,6 +138,10 @@
         .diag-cell .tl { position: absolute; top: 1px; left: 2px; }
         .diag-cell .br { position: absolute; bottom: 1px; right: 2px; }
 
+        .diag-cell-up { position: relative; background: linear-gradient(to top right, transparent 48%, #000 49%, #000 51%, transparent 52%); font-size: 8.5pt; padding: 0 !important; }
+        .diag-cell-up .tl { position: absolute; top: 2px; left: 2px; }
+        .diag-cell-up .br { position: absolute; bottom: 2px; right: 2px; }
+
         .slash-cell { background: linear-gradient(to top right, transparent 48%, #000 49%, #000 51%, transparent 52%); }
 
         /* HÀNG HEADER THỜI GIAN */
@@ -159,13 +164,17 @@
 <body>
 
     <div class="toolbar">
-        <div class="action-btn btn-print" style="flex: 0 1 auto;">
-            <a href="index.html" class="back-btn">⇽ Thoát</a>
+        <div class="action-btn btn-print" style="flex: 0 1 auto; background: transparent; padding: 0;">
+            <a href="index.html" class="back-btn" style="background: #e67e22;">⇽ Thoát</a>
         </div>
-        <button id="btn-form" class="mode-btn active" onclick="setMode('FORM')">🖱️ 1. Điền Form</button>
-        <button id="btn-text" class="mode-btn" onclick="setMode('TEXT')">📝 2. Chữ Nổi</button>
-        <button id="btn-draw" class="mode-btn" onclick="setMode('DRAW')">✏️ 3. Vẽ Tay</button>
-        <button id="btn-select" class="mode-btn" onclick="setMode('SELECT')">👆 4. Chọn / Dời</button>
+        <button class="action-btn btn-save" onclick="saveDraft()">💾 Lưu Nháp</button>
+        <button class="action-btn btn-clear" onclick="clearDraft()">🔄 Làm Mới</button>
+        
+        <button id="btn-form" class="mode-btn active" onclick="setMode('FORM')">🖱️ Điền Form</button>
+        <button id="btn-text" class="mode-btn" onclick="setMode('TEXT')">📝 Chữ Nổi</button>
+        <button id="btn-draw" class="mode-btn" onclick="setMode('DRAW')">✏️ Vẽ Tay</button>
+        <button id="btn-select" class="mode-btn" onclick="setMode('SELECT')">👆 Chọn / Dời</button>
+        
         <button class="action-btn btn-delete" onclick="deleteSelected()">🗑️ Xóa</button>
         <button class="action-btn btn-print" onclick="window.print()">🖨️ Xuất PDF</button>
     </div>
@@ -288,7 +297,6 @@
                     <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
-                    <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
                     <tr><td colspan="3" class="text-center">Nhiệt độ</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     <tr><td colspan="3" class="text-center">Mất máu</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
@@ -303,12 +311,12 @@
                             <div style="position: absolute; top: 0px; left: 2px;">Máy</div>
                             <div style="position: absolute; top: calc(60% - 8px); left: 2px;">Mê</div>
                         </td>
-                        <td rowspan="2" class="diag-cell" style="width: 6%;"><span class="tl">TTLT</span><span class="br">FeCO2</span></td>
+                        <td rowspan="2" class="diag-cell-up" style="width: 6%;"><span class="tl">TTLT</span><span class="br">FeCO2</span></td>
                         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                     </tr>
                     <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     <tr>
-                        <td rowspan="2" class="diag-cell"><span class="tl">áp lực</span><span class="br">SpO2</span></td>
+                        <td rowspan="2" class="diag-cell-up"><span class="tl">áp lực</span><span class="br">SpO2</span></td>
                         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                     </tr>
                     <tr>
@@ -316,8 +324,9 @@
                         <td class="slash-cell"></td><td class="slash-cell"></td><td class="slash-cell"></td><td class="slash-cell"></td><td class="slash-cell"></td><td class="slash-cell"></td>
                     </tr>
                     <tr>
-                        <td rowspan="2" class="diag-cell"><span class="tl">FiO2 %</span><span class="br" style="font-size: 7.5pt;">SEVO/ISO/N2O </span></td>
-                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td rowspan="2" style="vertical-align: middle;">Tổng<br>cộng</td>
+                        <td rowspan="2" class="diag-cell-up"><span class="tl">FiO2 %</span><span class="br" style="font-size: 7.5pt;">SEVO/ISO/N2O</span></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        <td rowspan="2" class="text-center" style="vertical-align: middle;">Tổng<br>cộng</td>
                     </tr>
                     <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
@@ -336,10 +345,10 @@
                     <tr><td colspan="2"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     <tr><td colspan="2"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
-                    <tr style="height: 80px;">
+                    <tr style="height: 50px;">
                         <td class="vertical-text">Quan sát</td>
-                        <td colspan="2"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                        <td style="vertical-align: middle;">Tổng thời<br>gian mê</td>
+                        <td colspan="14"></td>
+                        <td class="text-center" style="vertical-align: middle;">Tổng thời<br>gian mê</td>
                     </tr>
                 </table>
 
@@ -425,12 +434,12 @@
                             <div style="position: absolute; top: 0px; left: 2px;">Máy</div>
                             <div style="position: absolute; top: calc(60% - 8px); left: 2px;">Mê</div>
                         </td>
-                        <td rowspan="2" class="diag-cell" style="width: 6%;"><span class="tl">TTLT</span><span class="br">FeCO2</span></td>
+                        <td rowspan="2" class="diag-cell-up" style="width: 6%;"><span class="tl">TTLT</span><span class="br">FeCO2</span></td>
                         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                     </tr>
                     <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     <tr>
-                        <td rowspan="2" class="diag-cell"><span class="tl">áp lực</span><span class="br">SpO2</span></td>
+                        <td rowspan="2" class="diag-cell-up"><span class="tl">áp lực</span><span class="br">SpO2</span></td>
                         <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                     </tr>
                     <tr>
@@ -438,8 +447,9 @@
                         <td class="slash-cell"></td><td class="slash-cell"></td><td class="slash-cell"></td><td class="slash-cell"></td><td class="slash-cell"></td><td class="slash-cell"></td>
                     </tr>
                     <tr>
-                        <td rowspan="2" class="diag-cell"><span class="tl">FiO2 %</span><span class="br" style="font-size: 7.5pt;">SEVO/ISO/N2O </span></td>
-                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td rowspan="2" style="vertical-align: middle;">Tổng<br>cộng</td>
+                        <td rowspan="2" class="diag-cell-up"><span class="tl">FiO2 %</span><span class="br" style="font-size: 7.5pt;">SEVO/ISO/N2O</span></td>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                        <td rowspan="2" class="text-center" style="vertical-align: middle;">Tổng<br>cộng</td>
                     </tr>
                     <tr><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
@@ -458,10 +468,10 @@
                     <tr><td colspan="2"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
                     <tr><td colspan="2"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
 
-                    <tr style="height: 80px;">
+                    <tr style="height: 50px;">
                         <td class="vertical-text">Quan sát</td>
-                        <td colspan="2"></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                        <td style="vertical-align: middle;">Tổng thời<br>gian mê</td>
+                        <td colspan="14"></td>
+                        <td class="text-center" style="vertical-align: middle;">Tổng thời<br>gian mê</td>
                     </tr>
                 </table>
 
@@ -477,9 +487,12 @@
 
             <canvas id="drawing-layer"></canvas>
         </div>
-    </div> <script>
+    </div> 
+    
+    <script>
         const canvas = new fabric.Canvas('drawing-layer', { selection: true });
 
+        // --- ĐỒNG BỘ SIZE CANVAS ---
         function syncCanvasSize() {
             const template = document.getElementById('form-content');
             const fullHeight = template.getBoundingClientRect().height;
@@ -493,7 +506,77 @@
 
         const resizeObserver = new ResizeObserver(() => { syncCanvasSize(); });
         resizeObserver.observe(document.getElementById('form-content'));
-        setTimeout(syncCanvasSize, 100);
+        
+        // --- CHỨC NĂNG LƯU VÀ XÓA DỮ LIỆU NHÁP ---
+        function saveDraft() {
+            try {
+                // Lưu dữ liệu của Canvas
+                const canvasData = canvas.toJSON();
+                
+                // Lưu dữ liệu của Form
+                const inputData = [];
+                document.querySelectorAll('.inline-input, .multiline-input').forEach(el => {
+                    inputData.push(el.value);
+                });
+
+                const draft = {
+                    canvas: canvasData,
+                    inputs: inputData
+                };
+
+                localStorage.setItem('medical_form_draft', JSON.stringify(draft));
+                alert('Đã lưu bản nháp thành công!');
+            } catch (error) {
+                alert('Có lỗi xảy ra khi lưu nháp.');
+                console.error(error);
+            }
+        }
+
+        function loadDraft() {
+            const saved = localStorage.getItem('medical_form_draft');
+            if (saved) {
+                try {
+                    const draft = JSON.parse(saved);
+                    
+                    // Tải dữ liệu Form
+                    if (draft.inputs) {
+                        const inputs = document.querySelectorAll('.inline-input, .multiline-input');
+                        inputs.forEach((el, index) => {
+                            if (draft.inputs[index] !== undefined) {
+                                el.value = draft.inputs[index];
+                            }
+                        });
+                    }
+
+                    // Tải dữ liệu Canvas
+                    if (draft.canvas) {
+                        canvas.loadFromJSON(draft.canvas, function() {
+                            canvas.renderAll();
+                        });
+                    }
+                } catch (error) {
+                    console.error('Lỗi khi tải bản nháp:', error);
+                }
+            }
+        }
+
+        function clearDraft() {
+            if (confirm('CẢNH BÁO: Hành động này sẽ xóa toàn bộ chữ, hình vẽ và dữ liệu nháp của bạn. Bạn có chắc chắn không?')) {
+                // Xóa Local Storage
+                localStorage.removeItem('medical_form_draft');
+                
+                // Làm sạch Canvas
+                canvas.clear();
+                
+                // Làm sạch Form Inputs
+                document.querySelectorAll('.inline-input, .multiline-input').forEach(el => {
+                    el.value = '';
+                });
+                
+                syncCanvasSize();
+                alert('Đã xóa toàn bộ dữ liệu!');
+            }
+        }
 
         // --- QUẢN LÝ CÁC CHẾ ĐỘ THAO TÁC ---
         let currentMode = 'FORM';
@@ -507,7 +590,6 @@
             if (canvasContainer) {
                 if (mode === 'FORM') {
                     canvasContainer.style.pointerEvents = 'none';
-                    canvas.allowTouchScrolling = true;
                 } else {
                     canvasContainer.style.pointerEvents = 'auto';
                 }
@@ -523,7 +605,6 @@
                 canvas.isDrawingMode = false;
                 canvas.defaultCursor = 'crosshair';
                 canvas.selection = false;
-                canvas.allowTouchScrolling = true;
             }
             else if (mode === 'DRAW') {
                 document.getElementById('btn-draw').classList.add('active');
@@ -532,18 +613,21 @@
                 canvas.freeDrawingBrush = new fabric.PencilBrush(canvas);
                 canvas.freeDrawingBrush.width = 1.5;
                 canvas.freeDrawingBrush.color = "#000080";
-                canvas.allowTouchScrolling = false; 
             }
             else if (mode === 'SELECT') {
                 document.getElementById('btn-select').classList.add('active');
                 canvas.isDrawingMode = false;
                 canvas.defaultCursor = 'default';
                 canvas.selection = true;
-                canvas.allowTouchScrolling = true;
             }
         }
 
-        setTimeout(() => { setMode('FORM'); }, 200);
+        // Khởi động
+        setTimeout(() => { 
+            syncCanvasSize();
+            loadDraft(); 
+            setMode('FORM'); 
+        }, 300);
 
         canvas.on('mouse:down', function (options) {
             if (currentMode === 'TEXT' && !options.target) {
@@ -567,7 +651,7 @@
                 canvas.discardActiveObject();
                 canvas.requestRenderAll();
             } else {
-                alert("Vui lòng BẬT chế độ '👆 Chọn / Di chuyển', chạm vào hình/chữ bị sai trên lưới, sau đó mới nhấn nút Xóa!");
+                alert("Vui lòng BẬT chế độ '👆 Chọn / Dời', chạm vào hình/chữ bị sai trên lưới, sau đó mới nhấn nút Xóa!");
             }
         }
 

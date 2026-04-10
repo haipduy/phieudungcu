@@ -201,17 +201,16 @@
             margin-top: 5px;
         }
 
-        /* Nút chức năng */
+        /* Nút xuất PDF */
         .action-btn {
-            margin-top: 20px;
-            padding: 15px 30px;
-            font-size: 18px;
+            margin-top: 10px;
+            padding: 10px 16px;
+            font-size: 13px;
             background-color: var(--primary-blue);
             color: white;
             border: none;
             border-radius: 8px;
             cursor: pointer;
-            box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
             font-weight: bold;
         }
 
@@ -480,10 +479,8 @@
 
     <div class="no-print" style="display: flex; gap: 10px; margin-bottom: 30px;">
         <button class="action-btn" onclick="exportPDF()">Tải Xuống PDF</button>
-        <button class="action-btn" onclick="saveDraft()"
-            style="background-color: #28a745; box-shadow: 0 4px 6px rgba(40,167,69,0.3);">Lưu Nháp</button>
-        <button class="action-btn" onclick="resetForm()"
-            style="background-color: #6c757d; box-shadow: 0 4px 6px rgba(108,117,125,0.3);">Làm Mới</button>
+        <button class="action-btn" onclick="saveDraft()">Lưu Nháp</button>
+        <button class="action-btn" onclick="resetForm()">Làm Mới</button>
     </div>
     <!-- <button class="no-print action-btn" onclick="exportPDF()">Tải Xuống PDF</button> -->
 
