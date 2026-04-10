@@ -234,11 +234,10 @@
         }
 
         .vertical-text {
-            writing-mode: vertical-rl;
-            transform: rotate(180deg);
+            /* writing-mode: vertical-rl; */
+            /* transform: rotate(180deg); */
             text-align: center;
             vertical-align: middle !important;
-            letter-spacing: 2px;
         }
 
         .diag-cell {
@@ -355,8 +354,8 @@
 <body>
 
     <div class="toolbar">
-        <div class="action-btn btn-print" style="flex: 0 1 auto; background: transparent; padding: 0;">
-            <a href="index.html" class="back-btn" style="background: #e67e22;">⇽ Thoát</a>
+        <div class="action-btn btn-print">
+            <a href="index.html" class="back-btn">⇽ Trang chủ</a>
         </div>
         <button class="action-btn btn-save" onclick="saveDraft()">💾 Lưu Nháp</button>
         <button class="action-btn btn-clear" onclick="clearDraft()">🔄 Làm Mới</button>
@@ -940,6 +939,7 @@
                         <td rowspan="2" class="text-center" style="vertical-align: middle;">Tổng<br>cộng</td>
                     </tr>
                     <tr>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -1695,6 +1695,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                        <td></td>
                     </tr>
 
                     <tr>
@@ -2103,12 +2104,15 @@
 
             // Tùy chọn cấu hình PDF
             const opt = {
-                margin: [0, 0, 0, 0], // Lề [trên, trái, dưới, phải] tính bằng mm
+                margin: 0, // Lề [trên, trái, dưới, phải] tính bằng mm
                 filename: `Phieu_GMHS.pdf`,
-                image: { type: 'jpeg', quality: 0.98 },
+                image: { type: 'jpeg', quality: 1 },
                 html2canvas: {
                     scale: 2, // Tăng độ nét (2 hoặc 3 là vừa đẹp)
                     useCORS: true,
+                    scrollY: 0,         // QUAN TRỌNG: Ép tọa độ cuộn về 0 để không bị đẩy xuống
+                    scrollX: 0,
+                    windowWidth: 210 * 3.78, // Ép chiều rộng khung hình chuẩn A4 (quy đổi sang px)
                     logging: false
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -2117,6 +2121,7 @@
             // Thực hiện tạo và tải file
             // Lưu ý: Thư viện sẽ chụp toàn bộ 'capture-area' bao gồm cả phần vẽ canvas
             html2pdf().set(opt).from(element).save();
+            
         }
 
         window.addEventListener('keydown', function (e) {
