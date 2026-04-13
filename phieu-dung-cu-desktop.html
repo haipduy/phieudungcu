@@ -496,7 +496,12 @@
         </div>
     </div>
 
-    <button class="no-print action-btn" onclick="exportPDF()">Tải Xuống PDF</button>
+    <!-- <button class="no-print action-btn" onclick="exportPDF()">Tải Xuống PDF</button> -->
+    <div class="no-print" style="display: flex; gap: 10px; margin-bottom: 30px;">
+        <button class="action-btn" onclick="exportPDF()">Tải Xuống PDF</button>
+        <button class="action-btn" onclick="saveDraft()">Lưu Nháp</button>
+        <button class="action-btn" onclick="resetForm()">Làm Mới</button>
+    </div>
 
     <div id="cropperModal">
         <div class="modal-content">
@@ -595,6 +600,72 @@
                     });
                 }, 500);
             });
+        }
+        // Tự động load dữ liệu khi trang vừa mở
+        window.addEventListener('load', loadDraft);
+
+        function saveDraft() {
+            const draftData = {
+                inputs: [],
+                checkboxes: [],
+                signatures: {
+                    trong: document.getElementById('img-trong').src,
+                    ngoai: document.getElementById('img-ngoai').src
+                },
+                sigDisplay: {
+                    trong: document.getElementById('img-trong').style.display,
+                    ngoai: document.getElementById('img-ngoai').style.display
+                }
+            };
+
+            // Lưu tất cả text input
+            document.querySelectorAll('input[type="text"]').forEach((input, index) => {
+                draftData.inputs.push({ id: index, value: input.value });
+            });
+
+            // Lưu tất cả checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach((checkbox, index) => {
+                draftData.checkboxes.push({ id: index, checked: checkbox.checked });
+            });
+
+            localStorage.setItem('phieuPhauThuatDraft_desktop', JSON.stringify(draftData));
+            alert('Đã lưu bản nháp thành công!');
+        }
+
+        function loadDraft() {
+            const saved = localStorage.getItem('phieuPhauThuatDraft_desktop');
+            if (!saved) return;
+
+            const data = JSON.parse(saved);
+
+            // Phục hồi text input
+            document.querySelectorAll('input[type="text"]').forEach((input, index) => {
+                if (data.inputs[index]) input.value = data.inputs[index].value;
+            });
+
+            // Phục hồi checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach((checkbox, index) => {
+                if (data.checkboxes[index]) checkbox.checked = data.checkboxes[index].checked;
+            });
+
+            // Phục hồi chữ ký (nếu có)
+            if (data.signatures.trong && data.signatures.trong.startsWith('data:image')) {
+                const imgTrong = document.getElementById('img-trong');
+                imgTrong.src = data.signatures.trong;
+                imgTrong.style.display = data.sigDisplay.trong;
+            }
+            if (data.signatures.ngoai && data.signatures.ngoai.startsWith('data:image')) {
+                const imgNgoai = document.getElementById('img-ngoai');
+                imgNgoai.src = data.signatures.ngoai;
+                imgNgoai.style.display = data.sigDisplay.ngoai;
+            }
+        }
+
+        function resetForm() {
+            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu đã nhập và làm mới trang không?')) {
+                localStorage.removeItem('phieuPhauThuatDraft_desktop');
+                location.reload(); // Tải lại trang để xóa trắng mọi thứ
+            }
         }
     </script>
 </body>

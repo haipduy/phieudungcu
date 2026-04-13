@@ -520,7 +520,11 @@
 
     </div>
 
-    <button class="no-print action-btn" onclick="exportPDF()">Tải Xuống PDF (A4 Ngang)</button>
+    <div class="no-print" style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+        <button class="action-btn" onclick="exportPDF()">Tải Xuống PDF</button>
+        <button class="action-btn" onclick="saveDraft()">Lưu Nháp</button>
+        <button class="action-btn" onclick="resetForm()">Làm Mới</button>
+    </div>
 
     <div id="cropperModal">
         <div class="modal-content">
@@ -622,6 +626,74 @@
                 });
             }, 500);
         }
+        // --- Chức năng Lưu Nháp ---
+        function saveDraft() {
+            const formData = {};
+
+            // Lưu các input text
+            document.querySelectorAll('input[type="text"]').forEach((input, index) => {
+                formData['text_' + index] = input.value;
+            });
+
+            // Lưu các checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach((input, index) => {
+                formData['check_' + index] = input.checked;
+            });
+
+            // Lưu các ảnh chữ ký (dưới dạng Base64)
+            for (let i = 1; i <= 5; i++) {
+                const img = document.getElementById('img-sig' + i);
+                if (img && img.src && img.src.startsWith('data:image')) {
+                    formData['sig_' + i] = img.src;
+                }
+            }
+
+            localStorage.setItem('surgical_checklist_draft_desktop', JSON.stringify(formData));
+            alert('Đã lưu bản nháp thành công!');
+        }
+
+        // --- Chức năng Tải Nháp (Tự động chạy khi load trang) ---
+        function loadDraft() {
+            const savedData = localStorage.getItem('surgical_checklist_draft_desktop');
+            if (!savedData) return;
+
+            const formData = JSON.parse(savedData);
+
+            // Điền lại input text
+            document.querySelectorAll('input[type="text"]').forEach((input, index) => {
+                if (formData['text_' + index] !== undefined) {
+                    input.value = formData['text_' + index];
+                }
+            });
+
+            // Điền lại checkbox
+            document.querySelectorAll('input[type="checkbox"]').forEach((input, index) => {
+                if (formData['check_' + index] !== undefined) {
+                    input.checked = formData['check_' + index];
+                }
+            });
+
+            // Điền lại chữ ký
+            for (let i = 1; i <= 5; i++) {
+                if (formData['sig_' + i]) {
+                    const img = document.getElementById('img-sig' + i);
+                    img.src = formData['sig_' + i];
+                    img.style.display = 'block';
+                }
+            }
+        }
+
+        // --- Chức năng Làm Mới ---
+        function resetForm() {
+            if (confirm('Bạn có chắc chắn muốn xóa toàn bộ dữ liệu đã nhập và làm mới trang không?')) {
+                // Xóa trong LocalStorage
+                localStorage.removeItem('surgical_checklist_draft_desktop');
+                // Load lại trang để reset mọi thứ về mặc định
+                window.location.reload();
+            }
+        }
+        // Gọi hàm loadDraft khi trang web vừa mở
+        window.addEventListener('load', loadDraft);
     </script>
 </body>
 
