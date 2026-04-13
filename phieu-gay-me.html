@@ -7,6 +7,8 @@
     <title>Phiếu Gây Mê Hồi Sức - Chuẩn Y Tế</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     <style>
         /* --- CSS Reset & Chuẩn In Ấn --- */
         * {
@@ -201,7 +203,6 @@
             display: flex;
             justify-content: space-between;
             margin-bottom: 8px;
-            line-height: 1.4;
         }
 
         .bold {
@@ -348,6 +349,67 @@
                 background: transparent !important;
             }
         }
+        /* Khu vực 5 chữ ký */
+
+        .sig-img {
+            max-width: 100%;
+            max-height: 100px;
+            display: none;
+            margin: 10px auto 0 auto;
+        }
+        .upload-btn {
+            padding: 2px 5px;
+            font-size: 10px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        /* Modal Cropper */
+        #cropperModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+
+        .img-container {
+            max-height: 60vh;
+            margin-bottom: 15px;
+        }
+
+        .pdf-exporting .upload-btn {
+            display: none !important;
+        }
+
+
+        .vertical-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            /* Dịch chuyển vào chính giữa ô và xoay ngược 90 độ */
+            transform: translate(-50%, -50%) rotate(-90deg);
+            transform-origin: center center;
+            white-space: nowrap; /* Bắt buộc: Chống rớt dòng làm vỡ chữ */
+        }
+        .vertical-cell {
+            padding: 0 !important;
+            position: relative !important;
+        }
     </style>
 </head>
 
@@ -375,7 +437,7 @@
 
                 <div
                     style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 25px;">
-                    <div class="text-center bold" style="width: 35%; line-height: 1.2;">
+                    <div class="text-center bold" style="width: 35%;">
                         SỞ Y TẾ ĐÀ NẴNG<br>BỆNH VIỆN ĐẠI HỌC Y KHOA<br>PHAN CHÂU TRINH<br>
                         <span style="font-weight: normal; font-size: 11pt;">Khoa Phẫu thuật Gây mê - Hồi sức</span>
                     </div>
@@ -431,57 +493,53 @@
 
                 <table class="main-table">
                     <tr>
-                        <td rowspan="21" style="width: 24%; padding: 5px;">
-                            <b style="font-size: 11pt;">Đánh giá trước mổ</b><br>
-                            - ASA: 1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5<br>
-                            - Dạ dày đầy/ Cấp cứu<br>
-                            - Mallampati: 1 &nbsp; 2 &nbsp; 3 &nbsp; 4<br>
-                            - Dị ứng: <input type="text" class="inline-input" style="width: 80px;"><br>
+                        <td rowspan="21" colspan="2" style="width: 30%;">
+                            <b style="font-size: 11pt;">Đánh giá trước mổ</b><br><br>
+                            - ASA: 1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5<br><br>
+                            - Dạ dày đầy/ Cấp cứu<br><br>
+                            - Mallampati: 1 &nbsp; 2 &nbsp; 3 &nbsp; 4<br><br>
+                            - Dị ứng: <input type="text" class="inline-input" style="width: 80px;"><br><br>
                             - Tiền sử/ Thuốc dùng liên quan GMHS:<br>
                             <textarea class="multiline-input" style="height: 100px;"></textarea><br>
                             Bất thường lâm sàng/ cận lâm sàng liên quan GMHS.<br>
                             <textarea class="multiline-input" style="height: 120px;"></textarea>
                         </td>
                         <td colspan="2" style="width: 14%; border-right: none; border-bottom: none;"></td>
-
+                        <!-- <td class="text-center" style="width: 5%;">10</td><td class="text-center" style="width: 5%;">20</td><td class="text-center" style="width: 5%;">30</td><td class="text-center" style="width: 5%;">40</td><td class="text-center" style="width: 5%;">50</td><td class="text-center" style="width: 5%;"></td>
+                    <td class="text-center" style="width: 5%;">10</td><td class="text-center" style="width: 5%;">20</td><td class="text-center" style="width: 5%;">30</td><td class="text-center" style="width: 5%;">40</td><td class="text-center" style="width: 5%;">50</td><td class="text-center" style="width: 5%;"></td> -->
                         <td class="time-col-first" style="width: 5%;"><span class="time-text">10</span></td>
                         <td class="time-col-mid" style="width: 5%;"><span class="time-text">20</span></td>
                         <td class="time-col-mid" style="width: 5%;"><span class="time-text">30</span></td>
                         <td class="time-col-mid" style="width: 5%;"><span class="time-text">40</span></td>
                         <td class="time-col-mid" style="width: 5%;"><span class="time-text">50</span></td>
                         <td class="time-col-last" style="width: 5%;"></td>
-
+    
                         <td class="time-col-first" style="width: 5%;"><span class="time-text">10</span></td>
                         <td class="time-col-mid" style="width: 5%;"><span class="time-text">20</span></td>
                         <td class="time-col-mid" style="width: 5%;"><span class="time-text">30</span></td>
                         <td class="time-col-mid" style="width: 5%;"><span class="time-text">40</span></td>
                         <td class="time-col-mid" style="width: 5%;"><span class="time-text">50</span></td>
                         <td class="time-col-last" style="width: 5%;"></td>
-
                         <td rowspan="31" style="width: 16%; padding: 5px;">
                             <b style="font-size: 10pt;">Nhận xét và kết luận</b>
                             <textarea class="multiline-input" style="height: 95%;"></textarea>
                         </td>
                     </tr>
-
+    
                     <tr>
                         <td colspan="2" rowspan="20"
                             style="position: relative; border-right: 1px solid #000; padding: 0; border-top:none;">
                             <div style="position: absolute; top: calc(25% - 8px); left: 2px;">150</div>
                             <div style="position: absolute; top: calc(50% - 8px); left: 2px;">100</div>
                             <div style="position: absolute; top: calc(75% - 8px); left: 2px;">50</div>
-                            <div style="position: absolute; bottom: 0px; left: 2px;">0</div>
-                            <div
-                                style="position: absolute; top: 25%; right: 0; width: 8px; border-top: 1px solid #000;">
+                            <div style="position: absolute; bottom: 0; left: 2px;">0</div>
+                            <div style="position: absolute; top: 25%; right: 0; width: 8px; border-top: 1px solid #000;">
                             </div>
-                            <div
-                                style="position: absolute; top: 50%; right: 0; width: 8px; border-top: 1px solid #000;">
+                            <div style="position: absolute; top: 50%; right: 0; width: 8px; border-top: 1px solid #000;">
                             </div>
-                            <div
-                                style="position: absolute; top: 75%; right: 0; width: 8px; border-top: 1px solid #000;">
+                            <div style="position: absolute; top: 75%; right: 0; width: 8px; border-top: 1px solid #000;">
                             </div>
-                            <div
-                                style="position: absolute; bottom: 0; right: 0; width: 8px; border-top: 1px solid #000;">
+                            <div style="position: absolute; bottom: 0; right: 0; width: 8px; border-top: 1px solid #000;">
                             </div>
                         </td>
                         <td></td>
@@ -496,6 +554,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
+    
                     </tr>
                     <tr>
                         <td></td>
@@ -763,9 +822,10 @@
                         <td></td>
                         <td></td>
                     </tr>
-
+    
                     <tr>
-                        <td colspan="3" class="text-center">Nhiệt độ</td>
+                        <td colspan="4" class="text-center">Nhiệt độ</td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -780,22 +840,8 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-center">Mất máu</td>
+                        <td colspan="4" class="text-center">Mất máu</td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -810,22 +856,10 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-center">Nước tiểu</td>
+                        <td colspan="4"></td>
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="text-center" style="font-size: 9pt;">ALĐMP/ ALĐMPB/ ALTMTƯ</td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -840,7 +874,10 @@
                         <td></td>
                     </tr>
                     <tr>
-                        <td colspan="3" class="text-center">Nhịp thở</td>
+                        <td colspan="4" class="text-center">Nước tiểu</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -854,15 +891,49 @@
                         <td></td>
                         <td></td>
                     </tr>
-
                     <tr>
-                        <td rowspan="6" class="vertical-text" style="width: 4%;">Hô hấp</td>
+                        <td colspan="4" class="text-center" style="font-size: 9pt;">ALĐMP/ ALĐMPB/ ALTMTƯ</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" class="text-center">Nhịp thở</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+    
+                    <tr>
+                        <td rowspan="6" colspan="1" class="vertical-cell" style="width: 4%;">
+                            <span class="vertical-text">Hô hấp</span>                    
+                        </td>
                         <td rowspan="6" class="text-center"
                             style="position: relative; border-right: 1px solid #000; padding: 0;">
                             <div style="position: absolute; top: 0px; left: 2px;">Máy</div>
                             <div style="position: absolute; top: calc(60% - 8px); left: 2px;">Mê</div>
                         </td>
-                        <td rowspan="2" class="diag-cell" style="width: 6%;"><span class="tl">TTLT</span><span
+                        <td rowspan="2" colspan="2" class="diag-cell" style="width: 6%;"><span class="tl">TTLT</span><span
                                 class="br">FeCO2</span></td>
                         <td></td>
                         <td></td>
@@ -876,24 +947,9 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
                         <td></td>
                     </tr>
                     <tr>
-                        <td rowspan="2" class="diag-cell"><span class="tl">áp lực</span><span class="br">SpO2</span>
-                        </td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -906,6 +962,24 @@
                         <td></td>
                         <td></td>
                         <td></td>
+                    </tr>
+                    <tr>
+                        <td rowspan="2" colspan="2" class="diag-cell"><span class="tl">áp lực</span><span
+                                class="br">SpO2</span></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
                     </tr>
                     <tr>
                         <td class="slash-cell"></td>
@@ -920,10 +994,13 @@
                         <td class="slash-cell"></td>
                         <td class="slash-cell"></td>
                         <td class="slash-cell"></td>
+                        <td class="slash-cell"></td>
+                        <td class="slash-cell"></td>
+                    </tr>
                     </tr>
                     <tr>
-                        <td rowspan="2" class="diag-cell"><span class="tl">FiO2 %</span><span class="br"
-                                style="font-size: 7.5pt;">SEVO/ISO/N2O</span></td>
+                        <td rowspan="2" colspan="2" class="diag-cell"><span class="tl">FiO2 %</span><span class="br"
+                                style="font-size: 7.5pt;">SEVO/ISO/N2O </span></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -936,8 +1013,7 @@
                         <td></td>
                         <td></td>
                         <td></td>
-                        <td rowspan="2" style="vertical-align: top;">Tổng cộng
-                            <textarea class="multiline-input" style="height: 75%;"></textarea></td>
+                        <td rowspan="2" colspan="2" style="vertical-align: center;">Tổng<br>cộng</td>
                     </tr>
                     <tr>
                         <td></td>
@@ -953,9 +1029,11 @@
                         <td></td>
                         <td></td>
                     </tr>
-
+    
                     <tr>
-                        <td rowspan="8" class="vertical-text">Thuốc</td>
+                        <td rowspan="8" class="vertical-cell">
+                            <span class="vertical-text">Thuốc</span></td>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -972,6 +1050,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -988,6 +1067,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1004,6 +1084,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1020,6 +1101,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1036,6 +1118,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1052,6 +1135,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1068,6 +1152,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1083,25 +1168,11 @@
                         <td></td>
                         <td></td>
                     </tr>
-
+    
                     <tr>
-                        <td rowspan="5" class="vertical-text">Dịch truyền</td>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
+                        <td rowspan="5" class="vertical-cell">
+                            <span class="vertical-text">Dịch truyền</span></td>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1118,6 +1189,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1134,6 +1206,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1150,6 +1223,7 @@
                         <td></td>
                     </tr>
                     <tr>
+                        <td colspan="1"></td>
                         <td colspan="2"></td>
                         <td></td>
                         <td></td>
@@ -1165,764 +1239,35 @@
                         <td></td>
                         <td></td>
                     </tr>
-
-                    <tr style="height: 70px;">
-                        <td class="vertical-text">Quan sát</td>
-                        <td colspan="14"></td>
-                        <td style="vertical-align: top;">Tổng thời gian mê
-                            <textarea class="multiline-input" style="height: 75%;"></textarea>
-                        </td>
+                    <tr>
+                        <td colspan="1"></td>
+                        <td colspan="2"></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+    
+                    <tr style="height: 80px;">
+                        <td class="vertical-cell">
+                            <span class="vertical-text">Quan sát</span></td>
+                        <td colspan="15"></td>
+    
+                        <td style="vertical-align: top;">Tổng thời<br>gian mê</td>
                     </tr>
                 </table>
 
                 <div style="height: 10px;"></div>
 
-                <table class="main-table">
-                    <tr>
-                        <td rowspan="21" style="width: 24%; padding: 5px;">
-                            <b style="font-size: 11pt;">Đánh giá trước mổ</b><br>
-                            - ASA: 1 &nbsp; 2 &nbsp; 3 &nbsp; 4 &nbsp; 5<br>
-                            - Dạ dày đầy/ Cấp cứu<br>
-                            - Mallampati: 1 &nbsp; 2 &nbsp; 3 &nbsp; 4<br>
-                            - Dị ứng: <input type="text" class="inline-input" style="width: 80px;"><br>
-                            - Tiền sử/ Thuốc dùng liên quan GMHS:<br>
-                            <textarea class="multiline-input" style="height: 100px;"></textarea><br>
-                            Bất thường lâm sàng/ cận lâm sàng liên quan GMHS.<br>
-                            <textarea class="multiline-input" style="height: 120px;"></textarea>
-                        </td>
-                        <td colspan="2" style="width: 14%; border-right: none;"></td>
-
-                        <td class="time-col-first" style="width: 5%;"><span class="time-text">10</span></td>
-                        <td class="time-col-mid" style="width: 5%;"><span class="time-text">20</span></td>
-                        <td class="time-col-mid" style="width: 5%;"><span class="time-text">30</span></td>
-                        <td class="time-col-mid" style="width: 5%;"><span class="time-text">40</span></td>
-                        <td class="time-col-mid" style="width: 5%;"><span class="time-text">50</span></td>
-                        <td class="time-col-last" style="width: 5%;"></td>
-
-                        <td class="time-col-first" style="width: 5%;"><span class="time-text">10</span></td>
-                        <td class="time-col-mid" style="width: 5%;"><span class="time-text">20</span></td>
-                        <td class="time-col-mid" style="width: 5%;"><span class="time-text">30</span></td>
-                        <td class="time-col-mid" style="width: 5%;"><span class="time-text">40</span></td>
-                        <td class="time-col-mid" style="width: 5%;"><span class="time-text">50</span></td>
-                        <td class="time-col-last" style="width: 5%;"></td>
-
-                        <td rowspan="31" style="width: 16%; padding: 5px;">
-                            <b style="font-size: 10pt;">Nhận xét và kết luận</b>
-                            <textarea class="multiline-input" style="height: 95%;"></textarea>
-                        </td>
-                    </tr>
-
-                    <tr>
-                        <td colspan="2" rowspan="20"
-                            style="position: relative; border-right: 1px solid #000; padding: 0;">
-                            <div style="position: absolute; top: calc(25% - 8px); left: 2px;">150</div>
-                            <div style="position: absolute; top: calc(50% - 8px); left: 2px;">100</div>
-                            <div style="position: absolute; top: calc(75% - 8px); left: 2px;">50</div>
-                            <div style="position: absolute; bottom: -8px; left: 2px;">0</div>
-                            <div
-                                style="position: absolute; top: 25%; right: 0; width: 8px; border-top: 1px solid #000;">
-                            </div>
-                            <div
-                                style="position: absolute; top: 50%; right: 0; width: 8px; border-top: 1px solid #000;">
-                            </div>
-                            <div
-                                style="position: absolute; top: 75%; right: 0; width: 8px; border-top: 1px solid #000;">
-                            </div>
-                            <div
-                                style="position: absolute; bottom: 0; right: 0; width: 8px; border-top: 1px solid #000;">
-                            </div>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="text-center">Nhiệt độ</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="text-center">Mất máu</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="text-center">Nước tiểu</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="text-center" style="font-size: 9pt;">ALĐMP/ ALĐMPB/ ALTMTƯ</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3" class="text-center">Nhịp thở</td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td rowspan="6" class="vertical-text" style="width: 4%;">Hô hấp</td>
-                        <td rowspan="6" class="text-center"
-                            style="position: relative; border-right: 1px solid #000; padding: 0;">
-                            <div style="position: absolute; top: 0px; left: 2px;">Máy</div>
-                            <div style="position: absolute; top: calc(60% - 8px); left: 2px;">Mê</div>
-                        </td>
-                        <td rowspan="2" class="diag-cell" style="width: 6%;"><span class="tl">TTLT</span><span
-                                    class="br">FeCO2</span></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="2" class="diag-cell"><span class="tl">áp lực</span><span class="br">SpO2</span>
-                        </td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                        <td class="slash-cell"></td>
-                    </tr>
-                    <tr>
-                        <td rowspan="2" class="diag-cell"><span class="tl">FiO2 %</span><span class="br"
-                                style="font-size: 7.5pt;">SEVO/ISO/N2O</span></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td rowspan="2" class="text-center" style="vertical-align: middle;">Tổng cộng
-                            <textarea class="multiline-input" style="height: 75%;"></textarea>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td rowspan="8" class="vertical-text">Thuốc</td>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    <tr>
-                        <td rowspan="5" class="vertical-text">Dịch truyền</td>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-
-                    <tr style="height: 70px;">
-                        <td class="vertical-text">Quan sát</td>
-                        <td colspan="14"></td>
-                        <td style="vertical-align: top;">Tổng thời gian mê
-                            <textarea class="multiline-input" style="height: 75%;"></textarea>
-                        </td>
-                    </tr>
-                </table>
 
                 <div style="margin-top: 30px; display: flex; justify-content: flex-end;">
                     <div style="text-align: center; width: 300px;">
@@ -1930,13 +1275,30 @@
                             class="inline-input" style="width: 30px;"> năm 20<input type="text" class="inline-input"
                             style="width: 30px;"><br>
                         <b class="upper" style="font-size: 12pt;">Bác sĩ gây mê hồi sức</b>
-                        <br><br><br><br><br><br>
+                        <img id="img-sig5" class="sig-img" src="">
+                        <input type="file" id="file-sig5" class="no-print upload-btn" accept="image/*"
+                        onchange="openCropper(event, 'img-sig5')">
+                        <br>
                         (Ký và ghi rõ họ tên)
                     </div>
                 </div>
             </div>
 
             <canvas id="drawing-layer"></canvas>
+        </div>
+    </div>
+    
+    <div id="cropperModal">
+        <div class="modal-content">
+            <h3 style="margin-top:0">Cắt ảnh chữ ký</h3>
+            <div class="img-container">
+                <img id="imageToCrop" src="" style="max-width: 100%;">
+            </div>
+            <button onclick="cropImage()"
+                style="padding: 10px 20px; background: #28a745; color: white; border: none; cursor: pointer; border-radius: 5px; margin-right: 10px;">Xác
+                nhận</button>
+            <button onclick="closeModal()"
+                style="padding: 10px 20px; background: #dc3545; color: white; border: none; cursor: pointer; border-radius: 5px;">Hủy</button>
         </div>
     </div>
 
@@ -2107,6 +1469,9 @@
         }
         function downloadPDF() {
             const element = document.getElementById('capture-area');
+            // 2. Thêm class này vào để CSS tự động GIẤU nút tải ảnh chữ ký đi
+            element.classList.add('pdf-exporting');
+
             const patientName = document.querySelector('input[style*="width: 280px"]').value || "Phieu_GMHS";
 
             // Tùy chọn cấu hình PDF
@@ -2139,6 +1504,46 @@
                 }
             }
         });
+
+        let cropper;
+        let currentTargetImgId = '';
+
+        function openCropper(event, targetImgId) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            currentTargetImgId = targetImgId;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const imgToCrop = document.getElementById('imageToCrop');
+                imgToCrop.src = e.target.result;
+
+                document.getElementById('cropperModal').style.display = 'flex';
+
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(imgToCrop, {
+                    aspectRatio: NaN,
+                    viewMode: 1,
+                    autoCropArea: 1,
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function cropImage() {
+            if (!cropper) return;
+            const canvas = cropper.getCroppedCanvas();
+            const targetImg = document.getElementById(currentTargetImgId);
+
+            targetImg.src = canvas.toDataURL();
+            targetImg.style.display = 'block';
+            closeModal();
+        }
+
+        function closeModal() {
+            document.getElementById('cropperModal').style.display = 'none';
+            if (cropper) cropper.destroy();
+        }
     </script>
 
 </body>
